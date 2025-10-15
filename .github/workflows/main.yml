@@ -1,0 +1,99 @@
+name: Quickbase Web Automation Testcases
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      ALLURE_VERSION: '2.20.1'
+      GMAIL_TO: 'aruna.kumari72@gmail.com'
+      APP_URL: ${{ secrets.APP_URL }}
+      USERNAME: ${{ secrets.USERNAME }}
+      PWD: ${{ secrets.PWD }}
+      APP_PWD: ${{ secrets.APP_PWD }}
+
+    steps:
+      # Step 1: Checkout repository
+      - uses: actions/checkout@v3
+
+      # Step 2: Replace credentials in config.ini
+      - name: Replace credentials in config.ini
+        run: |
+          echo "Updating config.ini with environment variables..."
+          CONFIG_FILE="configurations/config.ini"
+          
+          sed -i "s|&APP_URL|${{ env.APP_URL }}|g" $CONFIG_FILE
+          sed -i "s|&USERNAME|${{ env.USERNAME }}|g" $CONFIG_FILE
+          sed -i "s|&PWD|${{ env.PWD }}|g" $CONFIG_FILE
+          sed -i "s|&APP_PWD|${{ env.APP_PWD }}|g" $CONFIG_FILE
+          
+          echo "Updated config.ini content:"
+          cat $CONFIG_FILE
+
+      # Step 3: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # Step 4: Install Python dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Step 5: Install Playwright browsers
+      - name: Install Playwright Browsers
+        run: playwright install --with-deps
+
+      # Step 6: Install Allure CLI
+      - name: Install Allure CLI
+        run: |
+          curl -sOL https://github.com/allure-framework/allure2/releases/download/${{ env.ALLURE_VERSION }}/allure-${{ env.ALLURE_VERSION }}.tgz
+          tar -zxf allure-${{ env.ALLURE_VERSION }}.tgz
+          sudo mv allure-${{ env.ALLURE_VERSION }} /opt/allure
+          sudo ln -sf /opt/allure/bin/allure /usr/local/bin/allure
+
+      # Step 7: Run Pytest Tests with Allure
+      - name: Run Playwright Tests
+        run: pytest --alluredir=allure-results
+
+      # Step 8: Generate Allure Report
+      - name: Generate Allure Report
+        if: always()
+        run: allure generate allure-results -o allure-report --clean
+
+      # Step 9: Deploy Allure Report to GitHub Pages
+      - name: Push Allure Report to gh-pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
+          publish_branch: gh-pages
+          destination_dir: allure-report
+          user_name: github-actions
+          user_email: github-actions@github.com
+
+      # Step 10: Send Allure Report Link via Gmail
+      - name: Send Allure Report Email
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.APP_PWD }}
+          subject: "Quickbase Automation Test Report"
+          to: ${{ env.GMAIL_TO }}
+          from: ${{ secrets.GMAIL_USER }}
+          content_type: text/html
+          body: |
+            Hello,<br><br>
+            The latest Quickbase web automation Allure report is available at:<br>
+            <a href="https://<your-github-username>.github.io/<repo-name>/allure-report">View Allure Report</a><br><br>
+            Regards,<br>
+            Automation Team
