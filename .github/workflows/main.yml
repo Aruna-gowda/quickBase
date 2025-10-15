@@ -62,8 +62,6 @@ jobs:
       # Step 7: Run Pytest Tests with Allure and retry-once
       - name: Run Playwright Tests
         run: |
-          # Set headless mode environment variable (for Playwright scripts)
-          export HEADLESS=True
           # Run tests with automatic retry-once for flaky tests
           pytest --alluredir=allure-results --reruns 1 --reruns-delay 2
 
