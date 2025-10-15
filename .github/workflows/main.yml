@@ -9,7 +9,7 @@ jobs:
 
     env:
       ALLURE_VERSION: '2.20.1'
-      GMAIL_TO: 'arunagowda984@gmail.com'
+      GMAIL_TO: 'aruna.kumari72@gmail.com'
       APP_URL: ${{ secrets.APP_URL }}
       USERNAME: ${{ secrets.USERNAME }}
       PWD: ${{ secrets.PWD }}
@@ -60,7 +60,8 @@ jobs:
       # Step 6: Run Playwright Tests with retry-once
       - name: Run Playwright Tests
         run: |
-          pytest --alluredir=allure-results --reruns 1 --reruns-delay 2
+          pytest --alluredir=allure-results
+          # pytest --alluredir=allure-results --reruns 1 --reruns-delay 2
 
       # Step 7: Generate Allure Report
       - name: Generate Allure Report
@@ -90,6 +91,8 @@ jobs:
           user_email: github-actions@github.com
           allow_empty_commit: true
 
+      
+
       # Step 10: Send Allure Report Link via Gmail
       - name: Send Allure Report Email
         if: always()
@@ -97,15 +100,14 @@ jobs:
         with:
           server_address: smtp.gmail.com
           server_port: 465
-          username: ${{ secrets.GMAIL_USER }}
-          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          username: ${{  secrets.USERNAME }}
+          password: ${{ secrets.PWD }}
           subject: "Quickbase Automation Test Report"
           to: ${{ env.GMAIL_TO }}
-          from: ${{ secrets.GMAIL_USER }}
-          content_type: text/html
-          body: |
+          from: ${{ secrets.USERNAME }}
+          html_body: |
             Hello,<br><br>
             The latest Quickbase web automation Allure report is available at:<br>
-            <a href="https://${{ github.repository_owner }}.github.io/${{ github.repository }}/allure-report">View Allure Report</a><br><br>
+            <a href="https://Aruna-gowda.github.io/Aruna-gowda/quickBase/allure-report">View Allure Report</a><br><br>
             Regards,<br>
-            Automation Team
+            Aruna
