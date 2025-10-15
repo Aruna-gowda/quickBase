@@ -108,6 +108,6 @@ jobs:
           html_body: |
             Hello,<br><br>
             The latest Quickbase web automation Allure report is available at:<br>
-            <a href="https://Aruna-gowda.github.io/Aruna-gowda/quickBase/allure-report">View Allure Report</a><br><br>
+            <a href="https://aruna-gowda.github.io/quickBase/">View Allure Report</a><br><br>
             Regards,<br>
             Aruna
