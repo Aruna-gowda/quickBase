@@ -14,6 +14,7 @@ jobs:
       USERNAME: ${{ secrets.USERNAME }}
       PWD: ${{ secrets.PWD }}
       APP_PWD: ${{ secrets.APP_PWD }}
+      HEADLESS: 'True'   # Force headless mode for CI
 
     steps:
       # Step 1: Checkout repository
@@ -44,14 +45,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          # Install pytest rerunfailures for automatic retry
           pip install pytest-rerunfailures
+          pip install playwright
+          playwright install chromium --with-deps
 
-      # Step 5: Install Playwright Chromium only
-      - name: Install Playwright Chromium
-        run: playwright install chromium --with-deps
-
-      # Step 6: Install Allure CLI
+      # Step 5: Install Allure CLI
       - name: Install Allure CLI
         run: |
           curl -sOL https://github.com/allure-framework/allure2/releases/download/${{ env.ALLURE_VERSION }}/allure-${{ env.ALLURE_VERSION }}.tgz
@@ -59,16 +57,26 @@ jobs:
           sudo mv allure-${{ env.ALLURE_VERSION }} /opt/allure
           sudo ln -sf /opt/allure/bin/allure /usr/local/bin/allure
 
-      # Step 7: Run Pytest Tests with Allure and retry-once
+      # Step 6: Run Playwright Tests with retry-once
       - name: Run Playwright Tests
         run: |
-          # Run tests with automatic retry-once for flaky tests
           pytest --alluredir=allure-results --reruns 1 --reruns-delay 2
 
-      # Step 8: Generate Allure Report
+      # Step 7: Generate Allure Report
       - name: Generate Allure Report
         if: always()
-        run: allure generate allure-results -o allure-report --clean
+        run: |
+          allure generate allure-results -o allure-report --clean
+
+      # Step 8: Verify Allure report folder exists
+      - name: Check Allure Report Folder
+        if: always()
+        run: |
+          if [ ! -d "allure-report" ]; then
+            echo "Allure report folder does not exist!"
+            ls -la
+            exit 1
+          fi
 
       # Step 9: Deploy Allure Report to GitHub Pages
       - name: Push Allure Report to gh-pages
@@ -76,11 +84,11 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: allure-report
+          publish_dir: ./allure-report
           publish_branch: gh-pages
-          destination_dir: allure-report
           user_name: github-actions
           user_email: github-actions@github.com
+          allow_empty_commit: true
 
       # Step 10: Send Allure Report Link via Gmail
       - name: Send Allure Report Email
@@ -98,6 +106,6 @@ jobs:
           body: |
             Hello,<br><br>
             The latest Quickbase web automation Allure report is available at:<br>
-            <a href="https://<your-github-username>.github.io/<repo-name>/allure-report">View Allure Report</a><br><br>
+            <a href="https://${{ github.repository_owner }}.github.io/${{ github.repository }}/allure-report">View Allure Report</a><br><br>
             Regards,<br>
             Automation Team
