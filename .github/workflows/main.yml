@@ -9,7 +9,7 @@ jobs:
 
     env:
       ALLURE_VERSION: '2.20.1'
-      GMAIL_TO: 'aruna.kumari72@gmail.com'
+      GMAIL_TO: 'arunagowda984@gmail.com'
       APP_URL: ${{ secrets.APP_URL }}
       USERNAME: ${{ secrets.USERNAME }}
       PWD: ${{ secrets.PWD }}
@@ -45,9 +45,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Step 5: Install Playwright browsers
-      - name: Install Playwright Browsers
-        run: playwright install --with-deps
+      # Step 5: Install Playwright Chromium only
+      - name: Install Playwright Chromium
+        run: playwright install chromium --with-deps
 
       # Step 6: Install Allure CLI
       - name: Install Allure CLI
@@ -85,8 +85,8 @@ jobs:
         with:
           server_address: smtp.gmail.com
           server_port: 465
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.APP_PWD }}
+          username: ${{ secrets.GMAIL_USER }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
           subject: "Quickbase Automation Test Report"
           to: ${{ env.GMAIL_TO }}
           from: ${{ secrets.GMAIL_USER }}
