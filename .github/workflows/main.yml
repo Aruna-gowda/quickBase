@@ -101,7 +101,7 @@ jobs:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{  secrets.USERNAME }}
-          password: ${{ secrets.PWD }}
+          password: ${{ secrets.APP_PWD }}
           subject: "Quickbase Automation Test Report"
           to: ${{ env.GMAIL_TO }}
           from: ${{ secrets.USERNAME }}
