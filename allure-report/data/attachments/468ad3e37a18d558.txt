@@ -1,0 +1,1 @@
+[INFO] Element not present as expected: Table after deleting label
