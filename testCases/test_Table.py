@@ -4,7 +4,7 @@ from pageObjects.login_page import LoginPage
 from pageObjects.Table_page import TablePage
 
 @pytest.mark.usefixtures("setup_and_teardown", "log_on_failure")
-class TestHome:
+class TestTable:
 
     @allure.title("TC001-User able to login into QuickBase application")
     def test_login_QuickBase(self):

@@ -1,6 +1,6 @@
 import allure
 import time
-from playwright.sync_api import Page
+from playwright.sync_api import Page, expect
 from playwright.sync_api import TimeoutError, Error
 
 
@@ -112,3 +112,88 @@ class BasePage:
         except Error as e:
             print(f"[ERROR] Error while verifying element absence: {e}")
             return True
+        # -------------------------------------------------------------------------
+
+    def verify_value_in_table(self, table_locator: str, value: str, timeout: int = 10000, assert_on_fail: bool = False) -> bool:
+        """
+        Waits for the table to load completely and verifies if a given value is present in any row.
+
+        Args:
+            table_locator (str): CSS or XPath locator for the table.
+            value (str): Text value to search for in the table.
+            timeout (int, optional): Max wait time in milliseconds for the table to load. Defaults to 10000 (10s).
+            assert_on_fail (bool, optional): If True, raises AssertionError when value not found.
+
+        Returns:
+            bool: True if value is found in table, False otherwise.
+        """
+        try:
+            # ✅ Wait for table to load & become visible
+            table = self.page.locator(table_locator)
+            expect(table).to_be_visible(timeout=timeout)
+            self.page.wait_for_load_state("networkidle")
+
+            # ✅ Get all rows
+            rows = table.locator("tbody tr")
+            row_count = rows.count()
+
+            # ✅ Iterate through rows to find the value
+            for i in range(row_count):
+                row_text = rows.nth(i).text_content().strip()
+                if value.lower() in row_text.lower():
+                    print(f"✅ Value '{value}' found in row {i+1}")
+                    return True
+
+            # ✅ Not found
+            print(f"❌ Value '{value}' not found in the table.")
+            if assert_on_fail:
+                raise AssertionError(f"Value '{value}' not found in table.")
+            return False
+
+        except TimeoutError:
+            print("⚠️ Table did not load within the given timeout.")
+            if assert_on_fail:
+                raise AssertionError("Table did not load within timeout period.")
+            return False
+   
+    @allure.step("Click element in table row where '{search_text}' is found")
+    def click_element_in_table(self, table_locator: str, search_text: str, element_type: str = "button", element_name: str = None):
+        table = self.page.locator(table_locator)
+        table.wait_for(state="visible", timeout=10000)
+
+        row_locator = f"{table_locator} tr" if not table_locator.strip().startswith("//") else f"{table_locator}//tr"
+        rows = self.page.locator(row_locator)
+        row_count = rows.count()
+        if row_count == 0:
+            raise AssertionError("❌ No rows found in the table!")
+
+        found = False
+        for i in range(row_count):
+            row = rows.nth(i)
+            row_text = row.inner_text().strip()
+            if search_text.lower() in row_text.lower():
+                found = True
+                print(f"✅ Found '{search_text}' in row {i+1}")
+                row.scroll_into_view_if_needed()
+
+                if element_type == "checkbox":
+                    row.locator("input[type='checkbox']").check()
+                elif element_type == "button":
+                    if element_name:
+                        row.get_by_role("button", name=element_name).click()
+                    else:
+                        row.locator("button").first.click()
+                elif element_type == "link":
+                    if element_name and "delete" in element_name.lower():
+                        row.locator("a[title='Permanently delete this table']").click()
+                    elif element_name:
+                        row.locator(f"a[title*='{element_name}']").click()
+                    else:
+                        row.locator("a").last.click()
+                else:
+                    raise ValueError("Unsupported element type. Use 'button', 'link', or 'checkbox'.")
+                break
+
+        if not found:
+            raise AssertionError(f"❌ Value '{search_text}' not found in the table.")
+
