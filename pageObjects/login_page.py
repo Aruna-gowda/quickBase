@@ -49,4 +49,4 @@ class LoginPage(BasePage):
 
         # Validation example
         # self.validation(self.page.title(), "Automation")
-        self.validation(self.page.title(), "Simple Project Manager")
+        self.validation(self.page.title(), "Project Manager")
