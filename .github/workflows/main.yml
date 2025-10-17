@@ -64,7 +64,7 @@ jobs:
       - name: Generate Allure Report
         if: always()
         run: |
-          allure generate allure-results -o allure-report --clean
+          allure generate reports -o allure-report --clean
 
       # Step 8: Verify Allure report folder exists
       - name: Check Allure Report Folder
