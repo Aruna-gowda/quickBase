@@ -1,7 +1,6 @@
 import allure
 from pageObjects.BasePage import BasePage
-from playwright.sync_api import TimeoutError as TError
-
+from playwright.sync_api import TimeoutError as TError 
 
 
 class TablePage(BasePage):
