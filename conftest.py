@@ -8,7 +8,7 @@ from playwright.sync_api import sync_playwright
 def setup_and_teardown(request):
     """Launch browser and create page once per test class"""
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, slow_mo=500)
+        browser = p.chromium.launch(headless=False, slow_mo=500)
         page = browser.new_page()
 
         # Attach page object to the class so all tests can access it

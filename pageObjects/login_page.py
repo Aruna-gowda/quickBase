@@ -1,7 +1,8 @@
 import allure
 from pageObjects.BasePage import BasePage
-from utilities import ReadConfigurations, config
+from utilities import read_otp
 from playwright.sync_api import TimeoutError as TError
+from utilities.read_config import read_data
 
 
 class LoginPage(BasePage):
@@ -9,10 +10,11 @@ class LoginPage(BasePage):
         super().__init__(page)
 
         # ---------- Test Data ----------
-        self.url = ReadConfigurations.read_configuration("basic info", "url")
-        self.username = ReadConfigurations.read_configuration("basic info", "Username")
-        self.password = ReadConfigurations.read_configuration("basic info", "Password")
-        self.app_password = ReadConfigurations.read_configuration("basic info", "APPPassword")
+        self.url = read_data("url")
+        self.username = read_data("Email")
+        self.password = read_data("Password")
+        self.app_password = read_data("APPPassword")
+        
 
         # ---------- Locators ----------
         self.username_field = self.page.locator('[name="loginid"]')
@@ -37,10 +39,10 @@ class LoginPage(BasePage):
         self.type(self.username_field, self.username, "Username")
         self.type(self.password_field, self.password, "Password")
         self.click(self.signin_button, "Sign In Button")
-        self.page.wait_for_timeout(5000)
+        self.page.wait_for_timeout(10000)
 
         # OTP Handling (optional)
-        otp = config.get_latest_otp_email(self.username, self.app_password)
+        otp = read_otp.get_latest_otp_email(self.username, self.app_password)
         self.type(self.otp_field, otp, "Verification Code")
         self.click(self.page.locator('[name=\"SignIn\"]'), "Sign In Button")
         self.page.wait_for_timeout(5000)
