@@ -1,12 +1,16 @@
 import allure
 from pageObjects.BasePage import BasePage
 from playwright.sync_api import TimeoutError as TError
+from faker import Faker
+
 
 
 class TablePage(BasePage):
     def __init__(self, page):
         super().__init__(page)
         
+        self.Table_name = "Automation"
+        self.field_name = "Name"
 
         # ----------------------------locators-------------------------------------------------------
         self.AppSettings = '//*[contains(text(),"App settings")]'
@@ -33,14 +37,7 @@ class TablePage(BasePage):
         self.table_Fileds = "#fieldsTable"
         self.appTable="#appTablesListTable"
 
-        self.Table_checkBox = '(//a[contains(text(),"Customers") and @data-tipped="next"]/preceding::input[@type="checkbox"])[last()]'
-        self.DeleteRow = '//a[contains(text(),"Customers") and (@data-tipped="next")]/following::a[@class="RowAction Delete Icon"]'
-        self.Yes_Delete = '//input[@name="typeYesField"]"'
-        self.Delete_Buttpn = '//button[contains(text(),"Delete Table")]'
-        # -------------------------------------------------------------------------------------------
-
-        self.Table_name = "Automation"
-        self.field_name = "Name"
+# ----------------------------------methods-------------------------------------------------------
 
     @allure.step("verify User is able to click on App settings and table link")
     def click_AppSettings_Table(self):
@@ -48,7 +45,7 @@ class TablePage(BasePage):
         self.click(self.Table_field, "Table Link")
 
     @allure.step("Create a new table in QuickBase")
-    def create_new_table(self, table_name="Automation", description="testing"):
+    def create_new_table(self):
         # Click '+ New Table'
         self.click(self.new_table_button, "'+ New Table' Button")
 
@@ -56,11 +53,11 @@ class TablePage(BasePage):
         self.click(self.from_scratch_link, "'From scratch Design your own' Link")
 
         # Fill table name and select option
-        self.type(self.table_name_field, table_name, "Table Name Field")
-        self.type(self.SingleRecord, table_name, "Single Record Field")
+        self.type(self.table_name_field, self.Table_name, "Table Name Field")
+        self.type(self.SingleRecord, self.Table_name, "Single Record Field")
 
         # Fill table description
-        self.type(self.table_description_field, description, "Table Description Field")
+        self.type(self.table_description_field, "testing", "Table Description Field")
 
         # Click OK to create table
         self.click(self.dialog_ok_button, "'OK' Button")
@@ -85,8 +82,8 @@ class TablePage(BasePage):
 
     @allure.step("Delete the created table")
     def Delete_Table(self):
-        self.click_element_in_table(self.appTable, "Automation", element_type="checkbox")
-        self.click_element_in_table(self.appTable, "Automation", element_type="link")
+        self.click_element_in_table(self.appTable, self.Table_name, element_type="checkbox")
+        self.click_element_in_table(self.appTable, self.Table_name, element_type="link")
         self.confirm_table_delete()
 
     @allure.step("Confirm table deletion")

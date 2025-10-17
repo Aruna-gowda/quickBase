@@ -1,6 +1,7 @@
-pytest
-pytest-playwright
-allure-pytest
-playwright
-pytest-rerunfailures
-python-dotenv
+pytest>=7.0.0
+pytest-playwright>=1.5.0
+allure-pytest>=2.13.10
+playwright>=1.40.0
+pytest-rerunfailures>=10.3
+python-dotenv>=1.0.0
+faker>=23.0.0

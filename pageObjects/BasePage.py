@@ -128,30 +128,30 @@ class BasePage:
             bool: True if value is found in table, False otherwise.
         """
         try:
-            # ✅ Wait for table to load & become visible
+            # Wait for table to load & become visible
             table = self.page.locator(table_locator)
             expect(table).to_be_visible(timeout=timeout)
             self.page.wait_for_load_state("networkidle")
 
-            # ✅ Get all rows
+            # Get all rows
             rows = table.locator("tbody tr")
             row_count = rows.count()
 
-            # ✅ Iterate through rows to find the value
+            # Iterate through rows to find the value
             for i in range(row_count):
                 row_text = rows.nth(i).text_content().strip()
                 if value.lower() in row_text.lower():
-                    print(f"✅ Value '{value}' found in row {i+1}")
+                    print(f" Value '{value}' found in row {i+1}")
                     return True
 
-            # ✅ Not found
-            print(f"❌ Value '{value}' not found in the table.")
+            # Not found
+            print(f" Value '{value}' not found in the table.")
             if assert_on_fail:
                 raise AssertionError(f"Value '{value}' not found in table.")
             return False
 
         except TimeoutError:
-            print("⚠️ Table did not load within the given timeout.")
+            print("Table did not load within the given timeout.")
             if assert_on_fail:
                 raise AssertionError("Table did not load within timeout period.")
             return False
@@ -165,7 +165,7 @@ class BasePage:
         rows = self.page.locator(row_locator)
         row_count = rows.count()
         if row_count == 0:
-            raise AssertionError("❌ No rows found in the table!")
+            raise AssertionError("No rows found in the table!")
 
         found = False
         for i in range(row_count):
@@ -173,7 +173,7 @@ class BasePage:
             row_text = row.inner_text().strip()
             if search_text.lower() in row_text.lower():
                 found = True
-                print(f"✅ Found '{search_text}' in row {i+1}")
+                print(f"Found '{search_text}' in row {i+1}")
                 row.scroll_into_view_if_needed()
 
                 if element_type == "checkbox":
@@ -195,5 +195,5 @@ class BasePage:
                 break
 
         if not found:
-            raise AssertionError(f"❌ Value '{search_text}' not found in the table.")
+            raise AssertionError(f" Value '{search_text}' not found in the table.")
 
