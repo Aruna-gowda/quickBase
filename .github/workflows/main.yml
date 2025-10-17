@@ -1,5 +1,6 @@
 name: Quickbase Web Automation Testcases
 
+# Enable manual trigger
 on:
   workflow_dispatch:
 
@@ -10,29 +11,30 @@ jobs:
     env:
       ALLURE_VERSION: '2.20.1'
       GMAIL_TO: 'aruna.kumari72@gmail.com'
-      url: ${{ secrets.APP_URL }}
-      Email: ${{ secrets.USERNAME }}
-      Password: ${{ secrets.PWD }}
-      APPPassword: ${{ secrets.APP_PWD }}
-      HEADLESS: 'True'   # Force headless mode for CI
+      URL: ${{ secrets.APP_URL }}
+      EMAIL: ${{ secrets.USERNAME }}
+      PASSWORD: ${{ secrets.PWD }}
+      APPPASSWORD: ${{ secrets.APP_PWD }}
+      HEADLESS: 'True'
 
     steps:
       # Step 1: Checkout repository
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       # Step 2: Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-		  
-	 # Step 3: Create .env file for local variables
+
+      # Step 3: Create .env file for local variables
       - name: Create .env file
         run: |
-          echo "APP_URL=${{ env.url }}" >> .env
-          echo "USERNAME=${{ env.Email }}" >> .env
-          echo "PWD=${{ env.Password }}" >> .env
-          echo "APP_PWD=${{ env.APPPassword }}" >> .env
+          echo "url=${{ env.URL }}" >> .env
+          echo "Email=${{ env.EMAIL }}" >> .env
+          echo "Password=${{ env.PASSWORD }}" >> .env
+          echo "APPPassword=${{ env.APPPASSWORD }}" >> .env
 
       # Step 4: Install Python dependencies
       - name: Install dependencies
@@ -48,11 +50,10 @@ jobs:
           sudo mv allure-${{ env.ALLURE_VERSION }} /opt/allure
           sudo ln -sf /opt/allure/bin/allure /usr/local/bin/allure
 
-      # Step 6: Run Playwright Tests with retry-once
+      # Step 6: Run Playwright Tests
       - name: Run Playwright Tests
         run: |
           pytest
-        
 
       # Step 7: Generate Allure Report
       - name: Generate Allure Report
@@ -82,8 +83,6 @@ jobs:
           user_email: github-actions@github.com
           allow_empty_commit: true
 
-      
-
       # Step 10: Send Allure Report Link via Gmail
       - name: Send Allure Report Email
         if: always()
@@ -91,7 +90,7 @@ jobs:
         with:
           server_address: smtp.gmail.com
           server_port: 465
-          username: ${{  secrets.USERNAME }}
+          username: ${{ secrets.USERNAME }}
           password: ${{ secrets.APP_PWD }}
           subject: "Quickbase Automation Test Report"
           to: ${{ env.GMAIL_TO }}
