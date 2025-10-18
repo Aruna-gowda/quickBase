@@ -93,8 +93,6 @@ pytest testCases/test_login.py --alluredir="./reports
 allure serve "./reports"
 ```
 
----
-
 ## 🔄 Framework Flow
 
 1. **Pytest** loads config from `pytest.ini`
@@ -178,12 +176,8 @@ Once the workflow finishes:
 
 **Aruna**
 Software Quality Analyst | 10+ years of experience
-Expertise in **Python, Playwright, Appium, Selenium, CI/CD Pipelines**
+Expertise in **Python, Playwright, Appium, Selenium, webdriverio, Javascript, UFT, Vbscript, CI/CD Pipelines**
 📍 Bengaluru, India
 
 ## 📜 License
-
 Licensed under the **MIT License** – free to use, modify, and distribute.
-
-Would you like me to also add **status badges** (e.g., "Build Passing", "Python 3.11", "Allure Report") to the top of this README for a more polished GitHub presentation?
-```
