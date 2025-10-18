@@ -5,11 +5,7 @@ This repository contains an end-to-end **web automation testing framework** buil
 It follows the **Page Object Model (POM)** design pattern for better maintainability and scalability.  
 Allure is integrated for generating rich HTML test execution reports.
 
----
-
 ## 📁 Project Structure
-
-```
 
 quickBase/
 │
@@ -35,9 +31,6 @@ quickBase/
 └── reports/                  # Stores Allure or HTML reports
 └── allure-results/
 
-````
-
----
 
 ## ⚙️ Features
 
@@ -47,8 +40,6 @@ quickBase/
 ✅ Integrated with **Allure Reports** for rich test visualization  
 ✅ CI/CD-ready with **GitHub Actions**  
 ✅ Supports **manual or scheduled GitHub runs**  
-
----
 
 ## 🚀 Getting Started (Local Setup)
 
@@ -82,9 +73,6 @@ Email=your_email
 Password=your_password
 AppPassword = your_apppassword
 ```
-
----
-
 ## 🧩 Run Tests Locally
 
 ### Run All Tests
@@ -139,24 +127,6 @@ allure serve "./reports"
 * **Allure-pytest**
 * **python-dotenv**
 
----
-
-## 🧪 Example Test Flow
-
-```python
-import allure
-from pageObjects.login_page import LoginPage
-
-@allure.title("Verify valid login")
-def test_valid_login(browser_context):
-    page = browser_context.new_page()
-    login = LoginPage(page)
-    login.login("user", "pass")
-    assert "dashboard" in page.url
-```
-
----
-
 ## 🔧 CI/CD Integration with GitHub Actions
 
 This framework integrates with **GitHub Actions** to automatically:
@@ -172,6 +142,7 @@ This framework integrates with **GitHub Actions** to automatically:
 * Runs on **manual trigger**
 * Stores credentials securely via **GitHub Secrets**
 * Publishes allure report to **GitHub Pages**
+* Send email with report link to recipients using Gmail credentials in secrets
 
 ---
 
@@ -203,16 +174,12 @@ Once the workflow finishes:
   https://<username>.github.io/quickBase/
   ```
 
----
-
 ## 👩‍💻 Author
 
 **Aruna**
 Software Quality Analyst | 10+ years of experience
 Expertise in **Python, Playwright, Appium, Selenium, CI/CD Pipelines**
 📍 Bengaluru, India
-
----
 
 ## 📜 License
 
