@@ -101,8 +101,8 @@ jobs:
           to: ${{ env.GMAIL_TO }}
           from: ${{ secrets.USERNAME }}
           html_body: |
-            Hello,<br><br>
-            The latest Quickbase web automation Allure report is available at:<br>
+            Hi All,<br><br>
+            The latest Quickbase web automation execution report is available at:<br>
             <a href="https://aruna-gowda.github.io/quickBase/">View Allure Report</a><br><br>
             Regards,<br>
             Aruna
